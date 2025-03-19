@@ -1,0 +1,45 @@
+repositories:
+  - name: cilium
+    url: https://helm.cilium.io/
+  - name: metallb
+    url: https://metallb.github.io/metallb
+  - name: cert-manager
+    url: https://charts.jetstack.io
+
+releases:
+  - name: cilium
+    namespace: kube-system
+    chart: cilium/cilium
+    version: 1.17.2
+    wait: true
+    values:
+      - image:
+          repository: quay.io/cilium/cilium
+          tag: v1.17.2
+          useDigest: false
+          pullPolicy: IfNotPresent
+        ipam:
+          mode: kubernetes
+        kubeProxyReplacement: true
+        gatewayAPI:
+          enabled: true
+    hooks:
+      - events: ["prepare"]
+        showlogs: true
+        command: kubectl
+        args: ["apply", "-f", "https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/experimental-install.yaml"]
+  - name: metallb
+    namespace: metallb-system
+    chart: metallb/metallb
+    version: 0.14.9
+    wait: true
+  - name: cert-manager
+    namespace: cert-manager
+    chart: cert-manager/cert-manager
+    version: 1.17.0
+    createNamespace: true
+    wait: true
+    values: []
+    set:
+      - name: installCRDs
+        value: true
