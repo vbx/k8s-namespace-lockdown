@@ -1,0 +1,21 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: test-selfsigned
+  namespace: beta
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: selfsigned-cert
+  namespace: beta
+spec:
+  dnsNames:
+    - gitlab.beta.mylittleforge.org
+  secretName: selfsigned-cert-tls
+  issuerRef:
+    name: test-selfsigned
+    kind: Issuer
+    group: cert-manager.io

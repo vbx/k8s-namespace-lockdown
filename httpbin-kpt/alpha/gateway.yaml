@@ -1,0 +1,38 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: gateway
+  namespace: alpha
+spec:
+  gatewayClassName: cilium
+  listeners:
+  - name: default
+    hostname: "*.alpha.mylittleforge.org"
+    port: 443
+    protocol: HTTPS
+    allowedRoutes:
+      namespaces:
+        from: Same
+    tls:
+      certificateRefs:
+      - kind: Secret
+        group: ""
+        name: selfsigned-cert-tls
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: http
+  namespace: alpha
+spec:
+  parentRefs:
+  - name: gateway
+  hostnames: ["gitlab.alpha.mylittleforge.org"]
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: httpbin-service
+      port: 80
