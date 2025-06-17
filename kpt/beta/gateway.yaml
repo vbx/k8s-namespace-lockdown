@@ -27,7 +27,7 @@ metadata:
 spec:
   parentRefs:
   - name: gateway
-  hostnames: ["gitla.beta.mylittleforge.org"]
+  hostnames: ["gitlab.beta.mylittleforge.org"]
   rules:
   - matches:
     - path:

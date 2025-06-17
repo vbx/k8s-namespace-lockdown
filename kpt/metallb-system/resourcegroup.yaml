@@ -1,0 +1,7 @@
+apiVersion: kpt.dev/v1alpha1
+kind: ResourceGroup
+metadata:
+  name: inventory-94758374
+  namespace: metallb-system
+  labels:
+    cli-utils.sigs.k8s.io/inventory-id: d16da9c3401be4092b0eba70d4dce50136f2effd-1745086176020470060

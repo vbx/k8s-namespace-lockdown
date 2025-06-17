@@ -10,8 +10,6 @@ uninstall:
 
 .PHONY: prepare
 prepare:
-	sudo sysctl fs.inotify.max_user_watches=524288
-	sudo sysctl fs.inotify.max_user_instances=512
 	kind create cluster --name kind --config=kindfile.yaml || true
 
 .PHONY: clean
@@ -29,7 +27,7 @@ test:
 .PHONY: check-deps
 check-deps:
 	@missing=0; \
-	for cmd in kind helm helmfile kubectl; do \
+	for cmd in kind helm helmfile kubectl kpt; do \
 	  if ! command -v $$cmd >/dev/null 2>&1; then \
 	    echo "❌ Missing dependency: $$cmd"; \
 	    missing=1; \
