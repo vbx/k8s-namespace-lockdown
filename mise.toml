@@ -1,0 +1,5 @@
+[tools]
+helm = "latest"
+helmfile = "latest"
+k9s = "latest"
+kpt = "latest"
