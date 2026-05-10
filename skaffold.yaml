@@ -1,0 +1,75 @@
+apiVersion: skaffold/v4beta14
+kind: Config
+metadata:
+  name: platform
+
+deploy:
+  helm:
+    releases:
+      - name: cilium
+        repo: https://helm.cilium.io/
+        remoteChart: cilium
+        namespace: kube-system
+        version: 1.17.2
+        wait: true
+        setValues:
+          image.repository: quay.io/cilium/cilium
+          image.tag: v1.17.2
+          image.useDigest: false
+          image.pullPolicy: IfNotPresent
+          ipam.mode: kubernetes
+          kubeProxyReplacement: true
+          gatewayAPI.enabled: true
+
+      - name: capsule
+        repo: https://projectcapsule.github.io/charts
+        remoteChart: capsule
+        namespace: capsule-system
+        createNamespace: true
+        version: 0.12.4
+        wait: true
+        setValues:
+          crds.install: true
+          crds.keep: true
+
+      - name: metallb
+        repo: https://metallb.github.io/metallb
+        remoteChart: metallb
+        namespace: metallb-system
+        createNamespace: true
+        version: 0.14.9
+        wait: true
+
+      - name: cert-manager
+        repo: https://charts.jetstack.io
+        remoteChart: cert-manager
+        namespace: cert-manager
+        createNamespace: true
+        version: 1.17.0
+        wait: true
+        setValues:
+          installCRDs: true
+---
+apiVersion: skaffold/v4beta14
+kind: Config
+metadata:
+  name: demo
+
+manifests:
+  rawYaml:
+    - manifests/metallb-system/address.yaml
+    - manifests/alpha/namespace.yaml
+    - manifests/alpha/app.yaml
+    - manifests/alpha/cert.yaml
+    - manifests/alpha/cnp.yaml
+    - manifests/alpha/debug.yaml
+    - manifests/alpha/gateway.yaml
+    - manifests/beta/namespace.yaml
+    - manifests/beta/app.yaml
+    - manifests/beta/cert.yaml
+    - manifests/beta/cnp.yaml
+    - manifests/beta/debug.yaml
+    - manifests/beta/gateway.yaml
+
+deploy:
+  kubectl: {}

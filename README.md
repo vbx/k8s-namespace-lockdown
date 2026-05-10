@@ -18,7 +18,29 @@ This project demonstrates:
 
 ## 🧪 Kind Demo
 
+If you use `mise`, install the declared tools first:
+
 ```bash
-make install   # Installs all components (Cilium, API Gateway, etc.)
+mise install
+```
+
+```bash
+make install   # Creates the Kind cluster, bootstraps CRDs, then runs Skaffold
 make test      # Runs tests to validate routing and network rules
 make clean     # Deletes all created resources
+```
+
+The local workflow is driven by Skaffold:
+
+- Helm releases install the platform components: Cilium, MetalLB, cert-manager and Capsule.
+- Raw Kubernetes manifests from `manifests/` install the demo resources for `alpha`, `beta` and MetalLB config.
+- `scripts/install.sh` only patches CoreDNS for the internal DNS rewrite.
+
+Useful direct commands:
+
+```bash
+skaffold run -m platform
+skaffold run -m demo
+skaffold delete -m demo
+skaffold delete -m platform
+```
