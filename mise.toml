@@ -1,0 +1,6 @@
+[tools]
+kind = "latest"
+kubectl = "latest"
+helm = "latest"
+k9s = "latest"
+skaffold = "latest"
