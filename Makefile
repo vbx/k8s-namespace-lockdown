@@ -1,19 +1,18 @@
 .PHONY: install
-install:check-deps prepare
-	./scripts/bootstrap-crds.sh
-	skaffold run -m platform
+install: check-deps prepare
 	skaffold run -m demo
-	./scripts/install.sh
-	
+
 .PHONY: uninstall
 uninstall:
-	./scripts/uninstall.sh
 	skaffold delete -m demo
-	skaffold delete -m platform
 
 .PHONY: prepare
 prepare:
-	kind create cluster --name kind --config=kindfile.yaml || true
+	@if kind get clusters | grep -q "^kind$$"; then \
+		echo "ℹ️ Cluster 'kind' already exists."; \
+	else \
+		kind create cluster --name kind --config=kindfile.yaml; \
+	fi
 
 .PHONY: clean
 clean:

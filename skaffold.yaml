@@ -1,7 +1,22 @@
 apiVersion: skaffold/v4beta14
 kind: Config
 metadata:
+  name: bootstrap
+
+manifests:
+  rawYaml:
+    - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/experimental-install.yaml
+
+deploy:
+  kubectl: {}
+---
+apiVersion: skaffold/v4beta14
+kind: Config
+metadata:
   name: platform
+
+requires:
+  - configs: [bootstrap]
 
 deploy:
   helm:
@@ -55,8 +70,12 @@ kind: Config
 metadata:
   name: demo
 
+requires:
+  - configs: [platform]
+
 manifests:
   rawYaml:
+    - manifests/coredns.yaml
     - manifests/metallb-system/address.yaml
     - manifests/alpha/namespace.yaml
     - manifests/alpha/app.yaml
@@ -72,4 +91,10 @@ manifests:
     - manifests/beta/gateway.yaml
 
 deploy:
-  kubectl: {}
+  kubectl:
+    hooks:
+      after:
+        - host:
+            command: ["kubectl", "rollout", "restart", "deployment", "coredns", "-n", "kube-system"]
+
+
